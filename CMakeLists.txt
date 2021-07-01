@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(ClassificadorEdgeTpu LANGUAGES CXX)
 
-set(SRC_FILES src/main.cpp src/detector.cpp)
+set(SRC_FILES src/main.cpp src/detector.cpp src/detector.h src/bbox.cpp src/bbox.h)
 
 set(TENSORFLOW_SOURCE_DIR "/home/dev-ia/coral/tensorflow_src/" CACHE PATH
   "Directory that contains the TensorFlow project" )
