@@ -9,6 +9,7 @@
 #include <tensorflow/lite/optional_debug_tools.h>
 #include <vector>
 #include <chrono>
+#include <iostream>
 
 
 class Detector
