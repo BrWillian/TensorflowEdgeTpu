@@ -1,10 +1,14 @@
 #ifndef DETECTOR_H
 #define DETECTOR_H
+
+#include "bbox.h"
 #include <edgetpu.h>
 #include <tensorflow/lite/interpreter.h>
 #include <tensorflow/lite/kernels/register.h>
 #include <tensorflow/lite/model.h>
 #include <tensorflow/lite/optional_debug_tools.h>
+#include <vector>
+#include <chrono>
 
 
 class Detector
@@ -17,7 +21,7 @@ public:
     bool BuildInterpreter(const char* _modelPath, const unsigned int num_of_threads = 1);
 
     // Rodar inferência
-
+    std::unique_ptr<std::vector<Bbox>> RunInference(const std::vector<uint8_t>& inputData, std::chrono::duration<double, std::milli>& timeSpan);
 private:
 
     // Declaraçao operadores
