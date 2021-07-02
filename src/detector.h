@@ -19,7 +19,7 @@ public:
     const char* GetVersion();
 
     // Construção interpretador
-    bool BuildInterpreter(const char* _modelPath, const unsigned int num_of_threads = 1);
+    bool BuildInterpreter(const char* _modelPath);
 
     // Rodar inferência
     std::unique_ptr<std::vector<Bbox>> RunInference(const std::vector<uint8_t>& inputData, std::chrono::duration<double, std::milli>& timeSpan);
@@ -34,7 +34,7 @@ private:
     //Declação Tensores
     TfLiteTensor* _outputLocations = nullptr;
     TfLiteTensor* _outputClasses = nullptr;
-    TfLiteTensor* _output_scores = nullptr;
+    TfLiteTensor* _outputScores = nullptr;
     TfLiteTensor* _numDetections = nullptr;
 
     // Threshold
@@ -44,10 +44,15 @@ private:
     size_t input_array_size = 1;
 
     // Funções internas para construação do modelo e grafo de inferência
-    bool BuildInterpreterInternal(const unsigned int num_of_threads);
-    bool BuildEdgeTpuInterpreterInternal(const char* modelPath, unsigned int num_of_threads = 1);
+    bool BuildEdgeTpuInterpreter(const char* modelPath);
     float* GetTensorData(TfLiteTensor& tensor, const int index = 0);
     TfLiteFloatArray* TfLiteFloatArrayCopy(const TfLiteFloatArray* src);
+
+    // Input do Modelo
+    float _inputHeight;
+    float _inputWidth;
+    float _inputChannels;
+
 };
 
 #endif // DETECTOR_H
