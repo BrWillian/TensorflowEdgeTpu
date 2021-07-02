@@ -18,14 +18,7 @@ add_subdirectory(
 set(CMAKE_CXX_STANDARD 11)
 
 add_executable(classificador ${SRC_FILES})
-target_link_libraries(classificador
-  tensorflow-lite
-  ${CMAKE_DL_LIBS}
-)
+target_link_libraries(classificador LINK_PRIVATE tensorflow-lite ${CMAKE_DL_LIBS} /usr/local/lib/libedgetpu.so.1)
 
-
-add_library(libclassificador SHARED ${SRC_FILES})
-target_link_libraries(libclassificador
-  tensorflow-lite
-  ${CMAKE_DL_LIBS}
-)
+add_library(_classificador SHARED ${SRC_FILES})
+target_link_libraries(_classificador LINK_PRIVATE tensorflow-lite ${CMAKE_DL_LIBS} /usr/local/lib/libedgetpu.so.1)
