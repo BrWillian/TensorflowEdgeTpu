@@ -7,16 +7,29 @@
 #include <tensorflow/lite/kernels/register.h>
 #include <tensorflow/lite/model.h>
 #include <tensorflow/lite/optional_debug_tools.h>
+#include <iomanip>
+#include <iostream>
+#include <memory>
+#include <string>
 #include <vector>
 #include <chrono>
-#include <iostream>
 
+#if defined(__GNUC__)
+    #define EXPORT __attribute__((visibility("default")))
+    #define IMPORT
+    #define CDECL __attribute__((cdecl))
+#endif
 
 class Detector
 {
 public:
     Detector();
     const char* GetVersion();
+
+    // Tensor inputs
+    const int Width() const;
+    const int Height() const;
+    const int Channels() const;
 
     // Construção interpretador
     bool BuildInterpreter(const char* _modelPath);
@@ -41,7 +54,6 @@ private:
     float score_threshold_ = 0.5;
 
     std::vector<int> input_tensor_shape;
-    size_t input_array_size = 1;
 
     // Funções internas para construação do modelo e grafo de inferência
     bool BuildEdgeTpuInterpreter(const char* modelPath);
@@ -52,7 +64,10 @@ private:
     float _inputHeight;
     float _inputWidth;
     float _inputChannels;
-
 };
+
+extern "C" {
+    // chamadas nativas
+}
 
 #endif // DETECTOR_H
