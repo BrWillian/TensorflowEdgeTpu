@@ -80,7 +80,6 @@ void Detector::BuildEdgeTpuInterpreter(const char *_modelPath)
         }
     }
 
-
     std::chrono::duration<double, std::milli> stop_time = std::chrono::steady_clock::now() - start_time;
 
     std::ostringstream time_caption;
