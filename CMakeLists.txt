@@ -31,13 +31,13 @@ add_subdirectory(
   "${TENSORFLOW_SOURCE_DIR}/tensorflow/lite"
   "${CMAKE_CURRENT_BINARY_DIR}/tensorflow-lite" EXCLUDE_FROM_ALL)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 add_executable(classificador ${SRC_FILES})
-target_link_libraries(classificador LINK_PRIVATE tensorflow-lite ${CMAKE_DL_LIBS} /usr/local/lib/libedgetpu.so.1)
+target_link_libraries(classificador LINK_PRIVATE tensorflow-lite ${CMAKE_DL_LIBS} /usr/local/lib/libedgetpu.so.1 stdc++fs)
 target_link_libraries(classificador LINK_PRIVATE ${OpenCV_LIBS})
 
 
 add_library(_classificador SHARED ${SRC_FILES})
-target_link_libraries(_classificador LINK_PRIVATE tensorflow-lite ${CMAKE_DL_LIBS} ${OpenCV_LIBS} /usr/local/lib/libedgetpu.so.1)
-target_link_libraries(classificador LINK_PRIVATE ${OpenCV_LIBS})
+target_link_libraries(_classificador LINK_PRIVATE tensorflow-lite ${CMAKE_DL_LIBS} /usr/local/lib/libedgetpu.so.1)
+target_link_libraries(_classificador LINK_PRIVATE ${OpenCV_LIBS})
