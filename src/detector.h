@@ -14,6 +14,8 @@
 #include <vector>
 #include <chrono>
 
+#define LOG(x) std::cerr
+
 #if defined(__GNUC__)
     #define EXPORT __attribute__((visibility("default")))
     #define IMPORT
@@ -32,10 +34,10 @@ public:
     const int Channels() const;
 
     // Construção interpretador
-    bool BuildInterpreter(const char* _modelPath);
+    void BuildInterpreter(const char* _modelPath);
 
     // Rodar inferência
-    std::unique_ptr<std::vector<Bbox>> RunInference(const std::vector<uint8_t>& inputData, std::chrono::duration<double, std::milli>& timeSpan);
+    std::unique_ptr<std::vector<Bbox>> RunInference(const std::vector<uint8_t>& inputData, std::chrono::duration<double, std::milli> &timeSpan);
 private:
 
     // Declaraçao operadores
@@ -51,14 +53,12 @@ private:
     TfLiteTensor* _numDetections = nullptr;
 
     // Threshold
-    float score_threshold_ = 0.5;
+    float score_threshold_ = 0.1;
 
     std::vector<int> input_tensor_shape;
 
     // Funções internas para construação do modelo e grafo de inferência
-    bool BuildEdgeTpuInterpreter(const char* modelPath);
-    float* GetTensorData(TfLiteTensor& tensor, const int index = 0);
-    TfLiteFloatArray* TfLiteFloatArrayCopy(const TfLiteFloatArray* src);
+    void BuildEdgeTpuInterpreter(const char* modelPath);
 
     // Input do Modelo
     float _inputHeight;
