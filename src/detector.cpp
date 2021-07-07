@@ -154,3 +154,10 @@ const int Detector::Channels() const
 {
     return _inputChannels;
 }
+Detector* CDECL ClassificadorDetector(const char* _modelPath)
+{
+    Detector* detector = new Detector();
+    detector->BuildInterpreter(_modelPath);
+
+    return detector;
+}
