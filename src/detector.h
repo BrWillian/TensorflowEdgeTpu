@@ -53,14 +53,10 @@ private:
     TfLiteTensor* _outputScores = nullptr;
     TfLiteTensor* _numDetections = nullptr;
 
-    // Threshold
-    float score_threshold_ = 0.1;
-
     std::vector<int> input_tensor_shape;
 
     // Funções internas para construação do modelo e grafo de inferência
     void BuildEdgeTpuInterpreter(const char* modelPath);
-
 
     // Input do Modelo
     float _inputHeight;
@@ -73,7 +69,9 @@ extern "C" {
     EXPORT Detector* CDECL ClassificadorDetectorEnv();
     EXPORT Detector* CDECL ClassificadorDetector(const char* weight_path);
     EXPORT char* CDECL RunInference(Detector* handle, char* image, size_t imageSize, float thres = 0.5);
+    EXPORT char* CDECL ClassificadorDestroy(Detector* handle);
     EXPORT void CDECL FreeResult(char* result);
+    EXPORT const char CDECL GetVersion();
 }
 
 #endif // DETECTOR_H

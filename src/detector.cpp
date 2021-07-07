@@ -103,8 +103,6 @@ std::unique_ptr<std::vector<Bbox>> Detector::RunInference(const std::vector<uint
     float *confidences = _interpreter->typed_output_tensor<float>(2);
     int numDetections = (int)*_interpreter->typed_output_tensor<float>(3);
 
-    LOG(INFO)<<"Num of detections: "<<numDetections<<std::endl;
-
     auto result = std::make_unique<std::vector<Bbox>>();
 
     for(auto i = 0; i<numDetections; i++)
@@ -156,7 +154,7 @@ const int Detector::Channels() const
 }
 Detector* CDECL ClassificadorDetector(const char* _modelPath)
 {
-    Detector* detector = new Detector();
+    Detector* detector = new Detector;
     detector->BuildInterpreter(_modelPath);
 
     return detector;
