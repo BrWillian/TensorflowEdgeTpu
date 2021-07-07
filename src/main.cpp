@@ -11,6 +11,8 @@ int main()
 {
      Detector* detector = new Detector;
 
+     Detector* teste = ClassificadorDetector("/home/dev-ia/Downloads/model_edgetpu.tflite");
+
      detector->BuildInterpreter("/home/dev-ia/Downloads/model_edgetpu.tflite");
 
      std::string path = "/home/dev-ia/05/";
