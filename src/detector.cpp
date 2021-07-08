@@ -1,9 +1,5 @@
 #include "detector.h"
 
-Detector::Detector()
-{
-
-}
 const char* Detector::GetVersion()
 {
     return "1.0.0";
@@ -164,19 +160,20 @@ Detector* CDECL ClassificadorDetector(const char* _modelPath)
     return nullptr;
 
 }
-char* CDECL RunInference(Detector* handle, unsigned char* imgData)
+char* CDECL RunInference(Detector* handle, unsigned char* imgData, size_t imgSize)
 {
     if(handle)
     {
         const auto& start_time = std::chrono::steady_clock::now();
 
-        size_t inputSize = handle->Height() * handle->Width() * handle->Channels();
+        std::vector<uchar> data(imgData, imgData + imgSize);
+        cv::Mat img, input_dim;
 
-        std::vector<uchar> data(imgData, imgData + inputSize);
-        cv::Mat img = cv::imdecode(cv::Mat(data), -1);
-        cv::resize(img, img, cv::Size(handle->Height(), handle->Width()));
+        img = cv::imdecode(cv::Mat(data), -1);
 
-        std::vector<uint8_t> input_data(img.data, img.data + (img.cols * img.rows * img.elemSize()));
+        cv::resize(img, input_dim, cv::Size(handle->Height(), handle->Width()));
+
+        std::vector<uint8_t> input_data(input_dim.data, input_dim.data + (input_dim.cols * input_dim.rows * input_dim.elemSize()));
 
         std::unique_ptr<std::vector<Bbox>>result = handle->RunInference(input_data);
 

@@ -71,7 +71,7 @@ extern "C" {
     // chamadas nativas
     EXPORT Detector* CDECL ClassificadorDetectorEnv();
     EXPORT Detector* CDECL ClassificadorDetector(const char* weight_path);
-    EXPORT char* CDECL RunInference(Detector* handle, unsigned char* image);
+    EXPORT char* CDECL RunInference(Detector* handle, unsigned char* image, size_t imgSize);
     EXPORT void CDECL ClassificadorDestroy(Detector* handle);
     EXPORT void CDECL FreeResult(char* result);
     EXPORT const char* CDECL GetVersion();
