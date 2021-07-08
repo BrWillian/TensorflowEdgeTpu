@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(ClassificadorEdgeTpu LANGUAGES CXX)
 
-set(SRC_FILES src/main.cpp src/detector.cpp src/serializer.cpp)
+set(SRC_FILES src/main.cpp src/detector.cpp src/detector.h src/serializer.cpp src/serializer.h src/bbox.h)
 
 # OpenCV Path
 if(NOT DEFINED OPENCV_STATIC_PATH)
