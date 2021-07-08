@@ -3,12 +3,14 @@
 
 #include "bbox.h"
 #include <edgetpu.h>
+#include <opencv2/opencv.hpp>
 #include <tensorflow/lite/interpreter.h>
 #include <tensorflow/lite/kernels/register.h>
 #include <tensorflow/lite/model.h>
 #include <tensorflow/lite/optional_debug_tools.h>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -68,7 +70,7 @@ extern "C" {
     // chamadas nativas
     EXPORT Detector* CDECL ClassificadorDetectorEnv();
     EXPORT Detector* CDECL ClassificadorDetector(const char* weight_path);
-    EXPORT char* CDECL RunInference(Detector* handle, char* image, size_t imageSize, float thres = 0.5);
+    EXPORT char* CDECL RunInference(Detector* handle, unsigned char* image);
     EXPORT char* CDECL ClassificadorDestroy(Detector* handle);
     EXPORT void CDECL FreeResult(char* result);
     EXPORT const char CDECL GetVersion();

@@ -1,5 +1,10 @@
 #include "detector.h"
 
+#if !defined(ARRAY_SIZE)
+    #define ARRAY_SIZE(x) (sizeof((x)) / sizeof((x)[0]))
+#endif
+
+
 Detector::Detector()
 {
 
@@ -123,7 +128,6 @@ std::unique_ptr<std::vector<Bbox>> Detector::RunInference(const std::vector<uint
             bbox->height = y1 - y0;
             bbox->center_x = bbox->x + (bbox->width / 2.0);
             bbox->center_y = bbox->y + (bbox->height / 2.0);
-#if 0
             std::cout << "class_id: " << bbox->class_id << std::endl;
             std::cout << "scores  : " << bbox->confidence << std::endl;
             std::cout << "x       : " << bbox->x << std::endl;
@@ -131,7 +135,7 @@ std::unique_ptr<std::vector<Bbox>> Detector::RunInference(const std::vector<uint
             std::cout << "width   : " << bbox->width << std::endl;
             std::cout << "height  : " << bbox->height << std::endl;
             std::cout << "center  : " << bbox->center_x << ", " << bbox->center_y << std::endl;
-#endif
+
             result->emplace_back(std::move(*bbox));
         }
     }
@@ -152,10 +156,48 @@ const int Detector::Channels() const
 {
     return _inputChannels;
 }
+// EXTERNS FUNCTIONS
 Detector* CDECL ClassificadorDetector(const char* _modelPath)
 {
     Detector* detector = new Detector;
-    detector->BuildInterpreter(_modelPath);
 
-    return detector;
+    if(detector)
+    {
+        detector->BuildInterpreter(_modelPath);
+        return detector;
+    }
+
+    LOG(ERROR)<<"Fail to build interpreter."<<std::endl;
+
+    return nullptr;
+
+}
+char* CDECL RunInference(Detector* handle, unsigned char* imgData)
+{
+    if(handle)
+    {
+        const auto& start_time = std::chrono::steady_clock::now();
+        std::chrono::duration<double, std::milli> inference_time_span;
+
+        size_t inputSize = handle->Height() * handle->Width() * handle->Channels();
+
+        std::vector<uchar> data(imgData, imgData + inputSize);
+        cv::Mat img = cv::imdecode(cv::Mat(data), -1);
+        cv::resize(img, img, cv::Size(handle->Height(), handle->Width()));
+
+        std::vector<uint8_t> input_data(img.data, img.data + (img.cols * img.rows * img.elemSize()));
+
+        handle->RunInference(input_data, inference_time_span);
+
+        std::chrono::duration<double, std::milli> time_span = std::chrono::steady_clock::now() - start_time;
+        std::ostringstream time_caption;
+
+        time_caption << "Time for run inference: " << std::fixed << std::setprecision(2) << inference_time_span.count() << " ms, " << 1000.0 / time_span.count() << "FPS";
+
+        LOG(INFO) << time_caption.str() <<std::endl;
+
+        return strdup(time_caption.str().c_str());
+    }
+
+    return strdup("Deu ruim!");
 }
