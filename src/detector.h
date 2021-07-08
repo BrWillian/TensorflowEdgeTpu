@@ -2,6 +2,7 @@
 #define DETECTOR_H
 
 #include "bbox.h"
+#include "serializer.h"
 #include <edgetpu.h>
 #include <opencv2/opencv.hpp>
 #include <tensorflow/lite/interpreter.h>
@@ -40,7 +41,7 @@ public:
     void BuildInterpreter(const char* _modelPath);
 
     // Rodar inferência
-    std::unique_ptr<std::vector<Bbox>> RunInference(const std::vector<uint8_t>& inputData, std::chrono::duration<double, std::milli> &timeSpan);
+    std::unique_ptr<std::vector<Bbox>> RunInference(const std::vector<uint8_t>& inputData);
 private:
 
     // Declaraçao operadores
@@ -71,9 +72,9 @@ extern "C" {
     EXPORT Detector* CDECL ClassificadorDetectorEnv();
     EXPORT Detector* CDECL ClassificadorDetector(const char* weight_path);
     EXPORT char* CDECL RunInference(Detector* handle, unsigned char* image);
-    EXPORT char* CDECL ClassificadorDestroy(Detector* handle);
+    EXPORT void CDECL ClassificadorDestroy(Detector* handle);
     EXPORT void CDECL FreeResult(char* result);
-    EXPORT const char CDECL GetVersion();
+    EXPORT const char* CDECL GetVersion();
 }
 
 #endif // DETECTOR_H

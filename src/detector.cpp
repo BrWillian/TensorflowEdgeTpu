@@ -94,10 +94,8 @@ void Detector::BuildEdgeTpuInterpreter(const char *_modelPath)
     LOG(INFO)<<"Time for loader interpreter: "<<time_caption.str()<<std::endl;
 
 }
-std::unique_ptr<std::vector<Bbox>> Detector::RunInference(const std::vector<uint8_t> &inputData, std::chrono::duration<double, std::milli> &timeSpan)
+std::unique_ptr<std::vector<Bbox>> Detector::RunInference(const std::vector<uint8_t> &inputData)
 {
-    const auto& start_time = std::chrono::steady_clock::now();
-
     uint8_t* input = _interpreter->typed_input_tensor<uint8_t>(0);
     std::memcpy(input, inputData.data(), inputData.size());
 
@@ -119,7 +117,6 @@ std::unique_ptr<std::vector<Bbox>> Detector::RunInference(const std::vector<uint
             float x0 = locations[4 * i + 1];
             float y1 = locations[4 * i + 2];
             float x1 = locations[4 * i + 3];
-
             bbox->class_id = (int)classes[i];
             bbox->confidence = confidences[i];
             bbox->x = x0;
@@ -128,6 +125,8 @@ std::unique_ptr<std::vector<Bbox>> Detector::RunInference(const std::vector<uint
             bbox->height = y1 - y0;
             bbox->center_x = bbox->x + (bbox->width / 2.0);
             bbox->center_y = bbox->y + (bbox->height / 2.0);
+
+#if 0
             std::cout << "class_id: " << bbox->class_id << std::endl;
             std::cout << "scores  : " << bbox->confidence << std::endl;
             std::cout << "x       : " << bbox->x << std::endl;
@@ -135,12 +134,10 @@ std::unique_ptr<std::vector<Bbox>> Detector::RunInference(const std::vector<uint
             std::cout << "width   : " << bbox->width << std::endl;
             std::cout << "height  : " << bbox->height << std::endl;
             std::cout << "center  : " << bbox->center_x << ", " << bbox->center_y << std::endl;
-
+#endif
             result->emplace_back(std::move(*bbox));
         }
     }
-
-    timeSpan = std::chrono::steady_clock::now() - start_time;
 
     return result;
 }
@@ -177,7 +174,6 @@ char* CDECL RunInference(Detector* handle, unsigned char* imgData)
     if(handle)
     {
         const auto& start_time = std::chrono::steady_clock::now();
-        std::chrono::duration<double, std::milli> inference_time_span;
 
         size_t inputSize = handle->Height() * handle->Width() * handle->Channels();
 
@@ -187,17 +183,27 @@ char* CDECL RunInference(Detector* handle, unsigned char* imgData)
 
         std::vector<uint8_t> input_data(img.data, img.data + (img.cols * img.rows * img.elemSize()));
 
-        handle->RunInference(input_data, inference_time_span);
+        std::unique_ptr<std::vector<Bbox>>result = handle->RunInference(input_data);
 
         std::chrono::duration<double, std::milli> time_span = std::chrono::steady_clock::now() - start_time;
         std::ostringstream time_caption;
 
-        time_caption << "Time for run inference: " << std::fixed << std::setprecision(2) << inference_time_span.count() << " ms, " << 1000.0 / time_span.count() << "FPS";
+        time_caption << "Time for run inference: " << std::fixed << std::setprecision(2) << time_span.count() << " ms, " << 1000.0 / time_span.count() << "FPS";
 
         LOG(INFO) << time_caption.str() <<std::endl;
 
-        return strdup(time_caption.str().c_str());
+        return strdup(Serializer::WriteJson(*result).c_str());
     }
 
-    return strdup("Deu ruim!");
+    LOG(ERROR) << "Fail to run inference." << std::endl;
+
+    return nullptr;
+}
+void CDECL ClassificadorDestroy(Detector* handle)
+{
+    delete handle;
+}
+void CDECL FreeResult(char* result)
+{
+    delete result;
 }
