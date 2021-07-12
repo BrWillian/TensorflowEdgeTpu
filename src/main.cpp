@@ -7,15 +7,15 @@ namespace fs = std::experimental::filesystem::v1;
 
 using namespace std;
 
-int main()
+int main(int argc, char *argv[])
 {
+     std::cout<< argv[0] << argv[1] <<std::endl;
      Detector* detector = new Detector;
 
-     //Detector* teste = ClassificadorDetector("/home/dev-ia/Downloads/model_edgetpu.tflite");
+     detector->BuildInterpreter(argv[1]);
 
-     detector->BuildInterpreter("/home/dev-ia/Downloads/model_edgetpu.tflite");
+     std::string path = argv[2];
 
-     std::string path = "/home/dev-ia/05/";
 
      const char *classes[] = {"carro", "moto", "onibus", "caminhao", "reboque", "caminhonete", "van"};
 
