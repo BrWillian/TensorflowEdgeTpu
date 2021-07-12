@@ -1,5 +1,9 @@
 #include "detector.h"
 
+Detector::Detector()
+{
+
+}
 const char* Detector::GetVersion()
 {
     return "1.0.0";

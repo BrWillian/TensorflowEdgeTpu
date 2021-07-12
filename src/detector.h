@@ -29,7 +29,6 @@ class Detector
 {
 public:
     Detector();
-
     const char* GetVersion();
 
     // Tensor inputs
