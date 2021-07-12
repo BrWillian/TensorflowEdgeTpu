@@ -7,18 +7,16 @@ set(SRC_FILES src/main.cpp src/detector.cpp src/detector.h src/serializer.cpp sr
 # OpenCV Path
 if(NOT DEFINED OPENCV_STATIC_PATH)
         message(WARNING "OPENCV_STATIC_PATH not set, using default value.")
-        set (OPENCV_STATIC_PATH /home/dev-ia/coral/opencv/build_minimal/out/install/lib/)
+        set (OPENCV_STATIC_PATH ../../opencv/build_minimal/out/install/lib/)
 endif()
 
-
-set(OpenCV_DIR /home/dev-ia/coral/opencv/build_minimal/out/install/lib/cmake/opencv4/)
 find_package(OpenCV REQUIRED PATHS ${OPENCV_STATIC_PATH} NO_DEFAULT_PATH)
 
 message(STATUS "    libraries: ${OpenCV_LIBS}")
 
 # Build Tensorflow Lite
 
-set(TENSORFLOW_SOURCE_DIR "/home/dev-ia/coral/tensorflow_src/" CACHE PATH
+set(TENSORFLOW_SOURCE_DIR "" CACHE PATH
   "Directory that contains the TensorFlow project" )
 if(NOT TENSORFLOW_SOURCE_DIR)
   get_filename_component(TENSORFLOW_SOURCE_DIR
@@ -29,7 +27,12 @@ add_subdirectory(
   "${TENSORFLOW_SOURCE_DIR}/tensorflow/lite"
   "${CMAKE_CURRENT_BINARY_DIR}/tensorflow-lite" EXCLUDE_FROM_ALL)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)  
+
+if(NOT DEFINED CMAKE_INSTALL_PREFIX)
+        message(WARNING "CMAKE_INSTALL_PREFIX not set, using default value.")
+        set (CMAKE_INSTALL_PREFIX ./release/)
+endif()
 
 add_executable(classificador ${SRC_FILES})
 target_link_libraries(classificador LINK_PRIVATE tensorflow-lite ${CMAKE_DL_LIBS} /usr/local/lib/libedgetpu.so.1 stdc++fs)
