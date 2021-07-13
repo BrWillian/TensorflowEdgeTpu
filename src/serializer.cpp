@@ -7,11 +7,11 @@ std::string Serializer::WriteJson(std::vector<Bbox> Object)
     ss << "{\"detections\": [";
     for(std::vector<Bbox>::iterator it = Object.begin(); it != Object.end();)
     {
-        ss << "{\"classe\":\""<< it->class_id;
-        ss << "\",\"confidence\":\"" << it->confidence;
-        ss << "\",\"boxes\":";
-        ss << "{\"x\":\"" << it->x;
-        ss << "\",\"y\":" << it->y;
+        ss << "{\"classe\":"<< it->class_id;
+        ss << ",\"confidence\":" << it->confidence;
+        ss << ",\"boxes\":";
+        ss << "{\"x\":" << it->x;
+        ss << ",\"y\":" << it->y;
         ss << ",\"w\":" << it->width;
         ss << ",\"h\":" << it->height;
         ss << "}";
