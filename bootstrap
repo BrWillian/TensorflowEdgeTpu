@@ -10,7 +10,7 @@
 
 # Variables
 
-DPKG_PACKAGES="git wget g++ openjdk-8-jdk libudev-dev libusb-1.0-0-dev build-essential libssl-dev"
+DPKG_PACKAGES="git wget g++ openjdk-8-jdk libudev-dev build-essential libssl-dev libc6 libgcc1 libstdc++6 libusb-1.0-0"
 BASE_PATH=$PWD
 USE_LOCAL_CMAKE=true
 
@@ -25,6 +25,9 @@ TENSORFLOW_PATH=$PWD/tensorflow_src
 # Classificador
 CLASSIFICADOR_PATH=$PWD/classificador_edge_tpu
 CLASSIFICADOR_INSTALL_PATH=$CLASSIFICADOR_PATH/build/release
+
+# EdgeTpu
+LIBEDGETPU_PATH=$PWD/edgetpu_runtime
 
 # install necessary dpkg packages
 
@@ -86,7 +89,7 @@ mkdir -p build
 mkdir -p ${OPENCV_INSTALL_PATH}
 
 cd build
-cmake -DOPENCV_EXTRA_MODULES_PATH=${OPENCVCONTRIB_PATH}/modules -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DOPENCV_FORCE_3RDPARTY_BUILD=ON -DWITH_1394=OFF -DWITH_VTK=OFF -DWITH_GTK=OFF -DWITH_NGRAPH=OFF -DWITH_CUDA=OFF -DWITH_V4L=OFF -DWITH_PROTOBUF=OFF -DWITH_IMGCODEC_HDR=OFF -DWITH_IMGCODEC_SUNRASTER=OFF -DWITH_IMGCODEC_PXM=OFF -DWITH_IMGCODEC_PFM=OFF -DWITH_FFMPEG=OFF -DWITH_GSTREAMER=OFF -DCMAKE_INSTALL_PREFIX=${OPENCV_INSTALL_PATH} -DOPENCV_GENERATE_PKGCONFIG=YES .. || echo 'failed'
+#cmake -DOPENCV_EXTRA_MODULES_PATH=${OPENCVCONTRIB_PATH}/modules -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DOPENCV_FORCE_3RDPARTY_BUILD=ON -DWITH_1394=OFF -DWITH_VTK=OFF -DWITH_GTK=OFF -DWITH_NGRAPH=OFF -DWITH_CUDA=OFF -DWITH_V4L=OFF -DWITH_PROTOBUF=OFF -DWITH_IMGCODEC_HDR=OFF -DWITH_IMGCODEC_SUNRASTER=OFF -DWITH_IMGCODEC_PXM=OFF -DWITH_IMGCODEC_PFM=OFF -DWITH_FFMPEG=OFF -DWITH_GSTREAMER=OFF -DCMAKE_INSTALL_PREFIX=${OPENCV_INSTALL_PATH} -DOPENCV_GENERATE_PKGCONFIG=YES .. || echo 'failed'
 #make -j3
 #make install
 
@@ -100,6 +103,21 @@ if [[ ! -d "${TENSORFLOW_PATH}" ]]
 then
     git clone -b v2.5.0 https://github.com/tensorflow/tensorflow.git ${TENSORFLOW_PATH} || (rm -rf ${TENSORFLOW_PATH} && exit 1)
 fi
+
+
+# Git clone and install libedgetpu
+cd $BASE_PATH
+
+if [[ ! -d "${LIBEDGETPU_PATH}" ]]
+then
+    wget https://github.com/google-coral/libedgetpu/releases/download/release-frogfish/edgetpu_runtime_20210119.zip -O ${LIBEDGETPU_PATH}.zip || (rm -rf ${LIBEDGETPU_PATH} && exit 1)
+    unzip ${LIBEDGETPU_PATH}.zip
+fi
+
+cd $LIBEDGETPU_PATH
+
+cp $LIBEDGETPU_PATH/libedgetpu/edgetpu* /usr/include/
+cp $LIBEDGETPU_PATH/libedgetpu/throttled/k8/* /usr/lib/x86_64-linux-gnu/
 
 
 # Git clone classificador edgetpu
@@ -120,4 +138,5 @@ cd build
 
 cmake -DTENSORFLOW_SOURCE_DIR=${TENSORFLOW_PATH} -DOPENCV_STATIC_PATH=${OPENCV_STATIC_PATH} -DCMAKE_INSTALL_PREFIX=${CLASSIFICADOR_INSTALL_PATH} .. || echo 'failed'
 cmake --build . -j3
-make install
+
+make
