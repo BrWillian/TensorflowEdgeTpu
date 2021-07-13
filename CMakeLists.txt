@@ -35,12 +35,12 @@ if(NOT DEFINED CMAKE_INSTALL_PREFIX)
 endif()
 
 add_executable(classificador ${SRC_FILES})
-target_link_libraries(classificador LINK_PRIVATE tensorflow-lite ${CMAKE_DL_LIBS} /usr/local/lib/libedgetpu.so.1 stdc++fs)
+target_link_libraries(classificador LINK_PRIVATE tensorflow-lite ${CMAKE_DL_LIBS} /usr/lib/x86_64-linux-gnu/libedgetpu.so.1 stdc++fs)
 target_link_libraries(classificador LINK_PRIVATE ${OpenCV_LIBS})
 
 
 add_library(_classificador SHARED ${SRC_FILES})
-target_link_libraries(_classificador LINK_PRIVATE tensorflow-lite ${CMAKE_DL_LIBS} /usr/local/lib/libedgetpu.so.1)
+target_link_libraries(_classificador LINK_PRIVATE tensorflow-lite ${CMAKE_DL_LIBS} /usr/lib/x86_64-linux-gnu/libedgetpu.so.1)
 target_link_libraries(_classificador LINK_PRIVATE ${OpenCV_LIBS})
 
 
