@@ -42,3 +42,11 @@ target_link_libraries(classificador LINK_PRIVATE ${OpenCV_LIBS})
 add_library(_classificador SHARED ${SRC_FILES})
 target_link_libraries(_classificador LINK_PRIVATE tensorflow-lite ${CMAKE_DL_LIBS} /usr/local/lib/libedgetpu.so.1)
 target_link_libraries(_classificador LINK_PRIVATE ${OpenCV_LIBS})
+
+
+install(TARGETS classificador DESTINATION ${CMAKE_INSTALL_PREFIX} CONFIGURATIONS Release)
+install(TARGETS _classificador DESTINATION ${CMAKE_INSTALL_PREFIX} CONFIGURATIONS Release)
+
+
+install(TARGETS classificador DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(TARGETS _classificador DESTINATION ${CMAKE_INSTALL_PREFIX})
