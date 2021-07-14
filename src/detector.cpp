@@ -201,5 +201,5 @@ void CDECL ClassificadorDestroy(Detector* handle)
 }
 void CDECL FreeResult(char* result)
 {
-    delete result;
+     free(result);
 }
