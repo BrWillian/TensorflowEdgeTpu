@@ -195,6 +195,41 @@ char* CDECL RunInference(Detector* handle, unsigned char* imgData, size_t imgSiz
 
     return nullptr;
 }
+char* CDECL RunInferenceROI(Detector* handle, unsigned char* imgData, size_t imgSize, int x, int y, int width, int height)
+{
+    if(handle)
+    {
+        const auto& start_time = std::chrono::steady_clock::now();
+
+        std::vector<uchar> data(imgData, imgData + imgSize);
+        cv::Mat img, input_dim;
+
+        img = cv::imdecode(cv::Mat(data), -1);
+
+        cv::Rect roi(x, y, width, height);
+
+        cv::Mat img_cropped = img(roi);
+
+        cv::resize(img_cropped, input_dim, cv::Size(handle->Height(), handle->Width()));
+
+        std::vector<uint8_t> input_data(input_dim.data, input_dim.data + (input_dim.cols * input_dim.rows * input_dim.elemSize()));
+
+        std::unique_ptr<std::vector<Bbox>>result = handle->RunInference(input_data);
+
+        std::chrono::duration<double, std::milli> time_span = std::chrono::steady_clock::now() - start_time;
+        std::ostringstream time_caption;
+
+        time_caption << "Time for run inference: " << std::fixed << std::setprecision(2) << time_span.count() << " ms, " << 1000.0 / time_span.count() << "FPS";
+
+        LOG(INFO) << time_caption.str() <<std::endl;
+
+        return strdup(Serializer::WriteJson(*result).c_str());
+    }
+
+    LOG(ERROR) << "Fail to run inference." << std::endl;
+
+    return nullptr;
+}
 void CDECL ClassificadorDestroy(Detector* handle)
 {
     delete handle;
