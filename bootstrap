@@ -33,7 +33,7 @@ LIBEDGETPU_PATH=$PWD/edgetpu_runtime
 
 for pkg in $DPKG_PACKAGES; do
     if ! (dpkg --get-selections | grep -q "^$pkg[:[:space:]*].*[[:space:]]*install$" >/dev/null); then
-        if sudo apt-get -qq --yes install $pkg; then
+        if apt-get -qq --yes install $pkg; then
             echo "Successfully installed $pkg"
         else
             echo "Error installing $pkg"
@@ -64,7 +64,7 @@ if [[ "$USE_LOCAL_CMAKE" = true ]]; then
 	git clone -b v3.20.0 https://github.com/Kitware/CMake cmake
 	cd cmake
 	CMAKE_PATH=$PWD
-	./bootstrap && make && sudo make install
+	./bootstrap && make && make install
 else
 	echo "Cmake is installed..."
 fi
