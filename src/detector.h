@@ -71,7 +71,7 @@ extern "C" {
     EXPORT Detector* CDECL ClassificadorDetectorEnv();
     EXPORT Detector* CDECL ClassificadorDetector(const char* weight_path);
     EXPORT char* CDECL RunInference(Detector* handle, unsigned char* image, size_t imgSize);
-    EXPORT char* CDECL RunInferenceROI(Detector* handle, unsigned char* image, size_t imgSize, int x, int y, int width, int height);
+    EXPORT char* CDECL RunInferenceRoi(Detector* handle, unsigned char* image, size_t imgSize, int x, int y, int width, int height);
     EXPORT void CDECL ClassificadorDestroy(Detector* handle);
     EXPORT void CDECL FreeResult(char* result);
     EXPORT const char* CDECL GetVersion();

@@ -195,7 +195,7 @@ char* CDECL RunInference(Detector* handle, unsigned char* imgData, size_t imgSiz
 
     return nullptr;
 }
-char* CDECL RunInferenceROI(Detector* handle, unsigned char* imgData, size_t imgSize, int x, int y, int width, int height)
+char* CDECL RunInferenceRoi(Detector* handle, unsigned char* imgData, size_t imgSize, int x, int y, int width, int height)
 {
     if(handle)
     {
